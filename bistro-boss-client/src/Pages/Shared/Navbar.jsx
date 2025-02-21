@@ -1,8 +1,23 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
-import './Navbar.css'
+import "./Navbar.css";
+import { AuthContext } from "../../Providers/AuthProvider";
+import { IoCartSharp } from "react-icons/io5";
+import useCarts from "../../Hooks/useCarts";
 
 const Navbar = () => {
+  const { user, logOut } = useContext(AuthContext);
+  const [cart] = useCarts();
+  console.log(cart);
+
+  const handleLogout = () => {
+    logOut()
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const navOptions = (
     <>
       <li>
@@ -11,23 +26,43 @@ const Navbar = () => {
         </NavLink>
       </li>
       <li>
-        <NavLink to="/menu" className="text-lg text-gray-300 hover:text-primary">
+        <NavLink
+          to="/menu"
+          className="text-lg text-gray-300 hover:text-primary"
+        >
           Menu
         </NavLink>
       </li>
       <li>
-        <NavLink to="/order/salad"
+        <NavLink
+          to="/order/salad"
           className="text-lg text-gray-300 hover:text-primary"
         >
           Order Food
         </NavLink>
       </li>
       <li>
-        <NavLink className="text-lg text-gray-300 hover:text-primary">
-          Contact
-        </NavLink>
+        <Link to="/dashboard/cart" className="btn btn-sm bg-transparent border-none">
+          <IoCartSharp className="text-xl text-white" />
+          <div className="badge badge-secondary">+{cart.length}</div>
+        </Link>
       </li>
-      <button className="btn btn-primary btn-sm">Login</button>
+      {user ? (
+        <>
+          <button
+            onClick={handleLogout}
+            className="btn btn-outline btn-success btn-sm"
+          >
+            Logout
+          </button>
+        </>
+      ) : (
+        <>
+          <NavLink to="/login" className="btn btn-primary btn-sm">
+            Login
+          </NavLink>
+        </>
+      )}
     </>
   );
 
@@ -71,9 +106,7 @@ const Navbar = () => {
             tabIndex={0}
             className="dropdown-content absolute right-0 mt-3 w-48 bg-gray-800 text-gray-300 rounded-lg shadow-lg"
           >
-            <div className="p-4 pl-8">
-            {navOptions}
-            </div>
+            <div className="p-4 pl-8">{navOptions}</div>
           </ul>
         </div>
       </div>
